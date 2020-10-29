@@ -74,8 +74,8 @@
   "description": "An Ionic project",
   "cordova": {
     "plugins": {
-      "@regulaforensics/cordova-plugin-document-reader-api": {},
-      "@regulaforensics/cordova-plugin-document-reader-core-fullrfid": {},
+      "@regulaforensics/cordova-plugin-document-reader-api-beta": {},
+      "@regulaforensics/cordova-plugin-document-reader-core-fullrfid-beta": {},
       "cordova-plugin-android-permissions": {},
       "cordova-plugin-telerik-imagepicker": {},
       "cordova-plugin-file": {},
