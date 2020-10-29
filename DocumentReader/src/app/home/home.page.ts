@@ -40,7 +40,7 @@ export class HomePage {
   @ViewChild('cancelButton', { static: false }) cancelButton: ElementRef
 
   constructor(public platform: Platform, private imagePicker: ImagePicker, private androidPermissions: AndroidPermissions) {
-   }
+  }
 
   ionViewDidEnter() {
     var app = this
@@ -64,23 +64,56 @@ export class HomePage {
       DocumentReaderResults = DocumentReader.DocumentReaderResults
       Scenario = DocumentReader.Scenario
       Enum = DocumentReader.Enum
-      File.resolveDirectoryUrl(File.applicationDirectory).then(dir => File.getFile(dir, "regula.license", null).then(fileEntry => {
-          fileEntry.file(file => {
-            var reader = new FileReader()
-            reader.onloadend = (r) => DocumentReader.prepareDatabase("Full", r => {
-              if (r != "database prepared")
-                  app.status.nativeElement.innerHTML = "Downloading database: " + r + "%"
-                else {
-                  app.status.nativeElement.innerHTML = "Loading......"
-                  DocumentReader.initializeReader(reader.result, m => onInitialized(), error1)
-                }
-              }, error1)
-            reader.readAsArrayBuffer(file)
-          }, error2)
-        }).catch(error2)).catch(error2)
+
+      readFile("", "regula.license", (license) => {
+        DocumentReader.prepareDatabase("Full", r => {
+          if (r != "database prepared")
+            app.status.nativeElement.innerHTML = "Downloading database: " + r + "%"
+          else {
+            app.status.nativeElement.innerHTML = "Loading......"
+            DocumentReader.initializeReader(license, m => onInitialized(), error1)
+          }
+        }, error1)
+      })
     })
-  
-    function updateUI(){
+
+    function addCertificates() {
+      File.resolveDirectoryUrl(File.applicationDirectory + "certificates").then(dir => {
+        dir.createReader().readEntries(entries => {
+          for (let i = 0; i < entries.length; i++) {
+            if (entries[i].isFile) {
+              var findExt = entries[i].name.split('.')
+              var pkdResourceType = 0
+              if (findExt.length > 0)
+                pkdResourceType = Enum.PKDResourceType.getType(findExt[findExt.length - 1].toLowerCase())
+              readFile("certificates", entries[i].name, (file, resType) => {
+                resType = resType[0]
+                var certificates = []
+                certificates.push({
+                  'binaryData': file,
+                  'resourceType': resType
+                })
+                DocumentReader.addPKDCertificates(certificates, s => console.log("certificate added"), e => console.log(e))
+              }, pkdResourceType)
+            }
+          }
+        })
+      })
+    }
+
+    function readFile(dirPath, fileName, callback, ...items) {
+      File.resolveDirectoryUrl(File.applicationDirectory + dirPath).then(dir => File.getFile(dir, fileName, null).then(fileEntry => fileEntry.file(file => {
+        var reader = new FileReader()
+        reader.onloadend = (evt) => {
+          var data = reader.result as String
+          data = data.substring(data.indexOf(',') + 1)
+          callback(data, items)
+        }
+        reader.readAsDataURL(file)
+      })))
+    }
+
+    function updateUI() {
       app.mainUI.nativeElement.style.display = isReadingRfid ? "none" : ""
       app.rfidUI.nativeElement.style.display = isReadingRfid ? "" : "none"
       app.rfidUIHeader.nativeElement.innerHTML = rfidUIHeader
@@ -96,65 +129,65 @@ export class HomePage {
 
     function handleCompletion(completion) {
       if (isReadingRfid && (completion.action === Enum.DocReaderAction.CANCEL || completion.action === Enum.DocReaderAction.ERROR))
-          hideRfidUI()
+        hideRfidUI()
       if (isReadingRfid && completion.action === Enum.DocReaderAction.NOTIFICATION)
-          updateRfidUI(completion.results.documentReaderNotification)
+        updateRfidUI(completion.results.documentReaderNotification)
       if (completion.action === Enum.DocReaderAction.COMPLETE)
-          if (isReadingRfid)
-              if (completion.results.rfidResult !== 1)
-                  restartRfidUI()
-              else {
-                  hideRfidUI()
-                  displayResults(completion.results)
-              }
-          else
-              handleResults(completion.results)
-  }
+        if (isReadingRfid)
+          if (completion.results.rfidResult !== 1)
+            restartRfidUI()
+          else {
+            hideRfidUI()
+            displayResults(completion.results)
+          }
+        else
+          handleResults(completion.results)
+    }
 
-  function showRfidUI() {
+    function showRfidUI() {
       // show animation
       isReadingRfid = true
       updateUI()
-  }
+    }
 
-  function hideRfidUI() {
+    function hideRfidUI() {
       // show animation
       restartRfidUI()
       isReadingRfid = false
       rfidUIHeader = "Reading RFID"
       rfidUIHeaderColor = "black"
       updateUI()
-  }
+    }
 
-  function restartRfidUI() {
+    function restartRfidUI() {
       rfidUIHeaderColor = "red"
       rfidUIHeader = "Failed!"
       rfidDescription = "Place your phone on top of the NFC tag"
       rfidProgress = -1
       updateUI()
-  }
+    }
 
-  function updateRfidUI(results) {
+    function updateRfidUI(results) {
       if (results.code === Enum.eRFID_NotificationAndErrorCodes.RFID_NOTIFICATION_PCSC_READING_DATAGROUP)
-          rfidDescription = Enum.eRFID_DataFile_Type.getTranslation(results.number)
+        rfidDescription = Enum.eRFID_DataFile_Type.getTranslation(results.number)
       rfidUIHeader = "Reading RFID"
       rfidUIHeaderColor = "black"
       rfidProgress = results.value
       updateUI()
       if (app.platform.is("ios"))
-          DocumentReader.setRfidSessionStatus(rfidDescription + "\n" + results.value + "%", null, null)
-  }
-
-  function customRFID() {
-      showRfidUI()
-      DocumentReader.readRFID(m=> handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
+        DocumentReader.setRfidSessionStatus(rfidDescription + "\n" + results.value + "%", null, null)
     }
 
-  function usualRFID() {
+    function customRFID() {
+      showRfidUI()
+      DocumentReader.readRFID(m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
+    }
+
+    function usualRFID() {
       doRfid = false
       app.rfidCheckbox["el"].checked = false
-      DocumentReader.startRFIDReader(m=> handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
-  }
+      DocumentReader.startRFIDReader(m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
+    }
 
     function onInitialized() {
       app.status.nativeElement.innerHTML = "Ready"
@@ -179,6 +212,7 @@ export class HomePage {
         },
       }, null, null)
       DocumentReader.getAvailableScenarios(sc => DocumentReader.isRFIDAvailableForUse(canRfid => postInitialize(JSON.parse(sc), canRfid), null), null)
+      // addCertificates()
     }
 
     function postInitialize(scenarios, canRfid) {
@@ -208,11 +242,7 @@ export class HomePage {
         app.rfidCheckbox["el"].disabled = false
         app.rfidCheckboxText.nativeElement.style.color = "black"
         app.rfidCheckboxText.nativeElement.innerHTML = "Process rfid reading"
-        app.rfidCheckbox["el"].onclick = () => {
-          doRfid = !doRfid
-          console.log("checkbock clicked!")
-          console.log("dirfod is now " + doRfid)
-        }
+        app.rfidCheckbox["el"].onclick = () => doRfid = !doRfid
         app.rfidCheckboxText.nativeElement.onclick = () => app.rfidCheckbox["el"].click()
       }
     }
@@ -238,9 +268,9 @@ export class HomePage {
     function displayResults(results) {
       app.status.nativeElement.innerHTML = results.getTextFieldValueByType({ fieldType: Enum.eVisualFieldType.FT_SURNAME_AND_GIVEN_NAMES })
       app.status.nativeElement.style.backgroundColor = "green"
-      if (results.getGraphicFieldImageByType({ fieldType: Enum.eGraphicFieldType.GF_DOCUMENT_IMAGE }) != null) 
+      if (results.getGraphicFieldImageByType({ fieldType: Enum.eGraphicFieldType.GF_DOCUMENT_IMAGE }) != null)
         app.documentImage.nativeElement.src = "data:image/png;base64," + results.getGraphicFieldImageByType({ fieldType: Enum.eGraphicFieldType.GF_DOCUMENT_IMAGE })
-      if (results.getGraphicFieldImageByType({ fieldType: Enum.eGraphicFieldType.GF_PORTRAIT }) != null) 
+      if (results.getGraphicFieldImageByType({ fieldType: Enum.eGraphicFieldType.GF_PORTRAIT }) != null)
         app.portraitImage.nativeElement.src = "data:image/png;base64," + results.getGraphicFieldImageByType({ fieldType: Enum.eGraphicFieldType.GF_PORTRAIT })
     }
 
@@ -250,7 +280,7 @@ export class HomePage {
       app.portraitImage.nativeElement.src = "assets/img/portrait.png"
     }
 
-    function scan(){
+    function scan() {
       DocumentReader.showScanner(m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
     }
 
@@ -261,7 +291,7 @@ export class HomePage {
           app.status.nativeElement.innerHTML = "copying image......"
           app.status.nativeElement.style.backgroundColor = "grey"
         }
-        File.readAsDataURL((app.platform.is("ios") ? "file://" : "")+results[0].substring(0, (results[0] as string).lastIndexOf("/")), results[0].substring((results[0] as string).lastIndexOf("/") + 1)).then((file => {
+        File.readAsDataURL((app.platform.is("ios") ? "file://" : "") + results[0].substring(0, (results[0] as string).lastIndexOf("/")), results[0].substring((results[0] as string).lastIndexOf("/") + 1)).then((file => {
           app.status.nativeElement.innerHTML = "processing image......"
           app.status.nativeElement.style.backgroundColor = "grey"
           DocumentReader.recognizeImage((file as string).substring(23), m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
@@ -271,11 +301,11 @@ export class HomePage {
 
     function recognizeAndroid() {
       app.androidPermissions.checkPermission(app.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE).then(result => {
-        if(result.hasPermission)
+        if (result.hasPermission)
           recognize()
         else
           app.androidPermissions.requestPermission(app.androidPermissions.PERMISSION.READ_EXTERNAL_STORAGE).then(result => {
-            if(result.hasPermission)
+            if (result.hasPermission)
               recognize()
             else
               console.log("storage permission denied")
