@@ -3,19 +3,14 @@ import { File } from '@ionic-native/file'
 import { ImagePicker } from '@ionic-native/image-picker/ngx'
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx'
 import { Platform } from '@ionic/angular'
+import { DocumentReader, Scenario, Enum, DocumentReaderCompletion, DocumentReaderResults, DocumentReaderNotification } from '@ionic-native/document-reader/ngx';
 
-var DocumentReader
-var DocumentReaderResults
-var Scenario
-var Enum
-var doRfid = false
-declare var cordova: any
-
-var isReadingRfid = false
-var rfidUIHeader = "Reading RFID"
-var rfidUIHeaderColor = "black"
-var rfidDescription = "Place your phone on top of the NFC tag"
-var rfidProgress = -1
+var doRfid: boolean = false
+var isReadingRfid: boolean = false
+var rfidUIHeader: string = "Reading RFID"
+var rfidUIHeaderColor: string = "black"
+var rfidDescription: string = "Place your phone on top of the NFC tag"
+var rfidProgress: number = -1
 
 @Component({
   selector: 'app-home',
@@ -39,11 +34,12 @@ export class HomePage {
   @ViewChild('rfidProgress', { static: false }) rfidProgress: ElementRef
   @ViewChild('cancelButton', { static: false }) cancelButton: ElementRef
 
-  constructor(public platform: Platform, private imagePicker: ImagePicker, private androidPermissions: AndroidPermissions) {
+  constructor(public DocumentReader: DocumentReader, public platform: Platform, private imagePicker: ImagePicker, private androidPermissions: AndroidPermissions) {
   }
 
   ionViewDidEnter() {
     var app = this
+    var DocumentReader = this.DocumentReader
     var error1 = e => {
       console.log(e)
       this.status.nativeElement.innerHTML = e
@@ -60,20 +56,15 @@ export class HomePage {
     app.status.nativeElement.innerHTML = "loading......"
     app.status.nativeElement.style.backgroundColor = "grey"
     app.platform.ready().then(() => {
-      DocumentReader = cordova.require("cordova-plugin-document-reader-api.DocumentReader")
-      DocumentReaderResults = DocumentReader.DocumentReaderResults
-      Scenario = DocumentReader.Scenario
-      Enum = DocumentReader.Enum
-
       readFile("", "regula.license", (license) => {
-        DocumentReader.prepareDatabase("Full", r => {
+        DocumentReader.prepareDatabase("Full").subscribe(r => {
           if (r != "database prepared")
             app.status.nativeElement.innerHTML = "Downloading database: " + r + "%"
           else {
             app.status.nativeElement.innerHTML = "Loading......"
-            DocumentReader.initializeReader(license, m => onInitialized(), error1)
+            DocumentReader.initializeReader(license).then(m => onInitialized()).catch(error1)
           }
-        }, error1)
+        })
       })
     })
 
@@ -93,7 +84,7 @@ export class HomePage {
                   'binaryData': file,
                   'resourceType': resType
                 })
-                DocumentReader.addPKDCertificates(certificates, s => console.log("certificate added"), e => console.log(e))
+                DocumentReader.addPKDCertificates(certificates).then(s => console.log("certificate added")).catch(e => console.log(e))
               }, pkdResourceType)
             }
           }
@@ -101,7 +92,7 @@ export class HomePage {
       })
     }
 
-    function readFile(dirPath, fileName, callback, ...items) {
+    function readFile(dirPath: string, fileName: string, callback, ...items) {
       File.resolveDirectoryUrl(File.applicationDirectory + dirPath).then(dir => File.getFile(dir, fileName, null).then(fileEntry => fileEntry.file(file => {
         var reader = new FileReader()
         reader.onloadend = (evt) => {
@@ -124,22 +115,23 @@ export class HomePage {
 
     function stopRfid() {
       hideRfidUI()
-      DocumentReader.stopRFIDReader(null, null)
+      DocumentReader.stopRFIDReader()
     }
 
-    function handleCompletion(completion) {
+    function handleCompletion(completion: DocumentReaderCompletion) {
       if (isReadingRfid && (completion.action === Enum.DocReaderAction.CANCEL || completion.action === Enum.DocReaderAction.ERROR))
         hideRfidUI()
       if (isReadingRfid && completion.action === Enum.DocReaderAction.NOTIFICATION)
         updateRfidUI(completion.results.documentReaderNotification)
       if (completion.action === Enum.DocReaderAction.COMPLETE)
-        if (isReadingRfid)
+        if (isReadingRfid){
           if (completion.results.rfidResult !== 1)
             restartRfidUI()
           else {
             hideRfidUI()
             displayResults(completion.results)
           }
+        }
         else
           handleResults(completion.results)
     }
@@ -167,26 +159,28 @@ export class HomePage {
       updateUI()
     }
 
-    function updateRfidUI(results) {
-      if (results.code === Enum.eRFID_NotificationAndErrorCodes.RFID_NOTIFICATION_PCSC_READING_DATAGROUP)
-        rfidDescription = Enum.eRFID_DataFile_Type.getTranslation(results.number)
+    function updateRfidUI(notification: DocumentReaderNotification) {
+      if (notification.code === Enum.eRFID_NotificationAndErrorCodes.RFID_NOTIFICATION_PCSC_READING_DATAGROUP)
+        rfidDescription = Enum.eRFID_DataFile_Type.getTranslation(notification.number)
       rfidUIHeader = "Reading RFID"
       rfidUIHeaderColor = "black"
-      rfidProgress = results.value
+      rfidProgress = notification.value
       updateUI()
       if (app.platform.is("ios"))
-        DocumentReader.setRfidSessionStatus(rfidDescription + "\n" + results.value + "%", null, null)
+        DocumentReader.setRfidSessionStatus(rfidDescription + "\n" + notification.value + "%")
     }
 
     function customRFID() {
       showRfidUI()
-      DocumentReader.readRFID(m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
+      DocumentReader.readRFID().subscribe(m =>
+        handleCompletion(DocumentReaderCompletion.fromJson(JSON.parse(m))))
     }
 
     function usualRFID() {
       doRfid = false
       app.rfidCheckbox["el"].checked = false
-      DocumentReader.startRFIDReader(m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
+      DocumentReader.startRFIDReader().subscribe(m =>
+        handleCompletion(DocumentReaderCompletion.fromJson(JSON.parse(m))))
     }
 
     function onInitialized() {
@@ -210,12 +204,14 @@ export class HomePage {
           scenario: "Mrz",
           doRfid: false
         },
-      }, null, null)
-      DocumentReader.getAvailableScenarios(sc => DocumentReader.isRFIDAvailableForUse(canRfid => postInitialize(JSON.parse(sc), canRfid), null), null)
+      })
+      DocumentReader.getAvailableScenarios().then(sc =>
+        DocumentReader.isRFIDAvailableForUse().then(canRfid =>
+          postInitialize(JSON.parse(sc), canRfid)))
       // addCertificates()
     }
 
-    function postInitialize(scenarios, canRfid) {
+    function postInitialize(scenarios: Array<any>, canRfid: boolean) {
       var inputs = []
       for (let index of scenarios) {
         var input = document.createElement("input")
@@ -225,7 +221,7 @@ export class HomePage {
         input.value = Scenario.fromJson(typeof index === "string" ? JSON.parse(index) : index).name
         if (index == 0)
           input.checked = true
-        input.onclick = () => DocumentReader.setConfig({ processParams: { scenario: Scenario.fromJson(typeof index === "string" ? JSON.parse(index) : index).name } }, null, null)
+        input.onclick = () => DocumentReader.setConfig({ processParams: { scenario: Scenario.fromJson(typeof index === "string" ? JSON.parse(index) : index).name } })
         input.style.display = "inline-block"
       }
       for (let input of inputs) {
@@ -247,17 +243,17 @@ export class HomePage {
       }
     }
 
-    function handleResults(results) {
+    function handleResults(results: DocumentReaderResults) {
       clearResults()
       if (doRfid && results != null && results.chipPage != 0) {
-        var accessKey = results.getTextFieldValueByType(51)
+        var accessKey = results.getTextFieldValueByType({ fieldType: 51 })
         if (accessKey != null && accessKey != "") {
           accessKey = accessKey.replace(/^/g, '').replace(/\n/g, '')
-          DocumentReader.setRfidScenario({ mMrz: accessKey, mPacePasswordType: 1, }, null, null)
+          DocumentReader.setRfidScenario({ mMrz: accessKey, mPacePasswordType: 1, })
         } else {
-          accessKey = results.getTextFieldValueByType(159)
+          accessKey = results.getTextFieldValueByType({ fieldType: 159 })
           if (accessKey != null && accessKey != "")
-            DocumentReader.setRfidScenario({ mMrz: accessKey, mPacePasswordType: 2, }, null, null)
+            DocumentReader.setRfidScenario({ mMrz: accessKey, mPacePasswordType: 2, })
         }
         // customRFID()
         usualRFID()
@@ -265,7 +261,7 @@ export class HomePage {
         displayResults(results)
     }
 
-    function displayResults(results) {
+    function displayResults(results: DocumentReaderResults) {
       app.status.nativeElement.innerHTML = results.getTextFieldValueByType({ fieldType: Enum.eVisualFieldType.FT_SURNAME_AND_GIVEN_NAMES })
       app.status.nativeElement.style.backgroundColor = "green"
       if (results.getGraphicFieldImageByType({ fieldType: Enum.eGraphicFieldType.GF_DOCUMENT_IMAGE }) != null)
@@ -281,7 +277,8 @@ export class HomePage {
     }
 
     function scan() {
-      DocumentReader.showScanner(m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
+      DocumentReader.showScanner().subscribe(m =>
+        handleCompletion(DocumentReaderCompletion.fromJson(JSON.parse(m))))
     }
 
     function recognize() {
@@ -294,7 +291,8 @@ export class HomePage {
         File.readAsDataURL((app.platform.is("ios") ? "file://" : "") + results[0].substring(0, (results[0] as string).lastIndexOf("/")), results[0].substring((results[0] as string).lastIndexOf("/") + 1)).then((file => {
           app.status.nativeElement.innerHTML = "processing image......"
           app.status.nativeElement.style.backgroundColor = "grey"
-          DocumentReader.recognizeImage((file as string).substring(23), m => handleCompletion(DocumentReader.DocumentReaderCompletion.fromJson(JSON.parse(m))), null)
+          DocumentReader.recognizeImage((file as string).substring(23)).subscribe(m =>
+            handleCompletion(DocumentReaderCompletion.fromJson(JSON.parse(m))))
         })).catch(error2)
       }, error2)
     }
