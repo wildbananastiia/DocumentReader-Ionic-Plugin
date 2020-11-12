@@ -3,7 +3,7 @@ import { File } from '@ionic-native/file'
 import { ImagePicker } from '@ionic-native/image-picker/ngx'
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx'
 import { Platform } from '@ionic/angular'
-import { DocumentReader, Scenario, Enum, DocumentReaderCompletion, DocumentReaderResults, DocumentReaderNotification } from '@ionic-native/document-reader/ngx';
+import { DocumentReader, Scenario, Enum, DocumentReaderCompletion, DocumentReaderResults, DocumentReaderNotification } from '@regulaforensics/ionic-native-document-reader-beta/ngx';
 
 var doRfid: boolean = false
 var isReadingRfid: boolean = false
