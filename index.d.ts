@@ -434,6 +434,11 @@ export declare const BarcodeType: {
     ALL_1D: number;
     CODE11: number;
 };
+export declare const CameraMode: {
+    AUTO: number;
+    CAMERA1: number;
+    CAMERA2: number;
+};
 export declare const CameraTypes: {
     FRONT: string;
     BACK: string;
@@ -777,6 +782,10 @@ export declare const eCheckDiagnose: {
     PPORTRAIT_COMPARISON_NOT_ENOUGH_IMAGES: number;
     PORTRAIT_COMPARISON_NO_LIVE_PHOTO: number;
     PORTRAIT_COMPARISON_NO_SERVICE_LICENSE: number;
+    PORTRAIT_COMPARISON_NO_PORTRAIT_DETECTED: number;
+    MOBILE_IMAGES_UNSUITABLE_LIGHT_CONDITIONS: number;
+    MOBILE_IMAGES_WHITE_UV_NO_DIFFERENCE: number;
+    LAST_DIAGNOSE_VALUE: number;
 };
 export declare const eCheckResult: {
     CH_CHECK_ERROR: number;
@@ -831,6 +840,7 @@ export declare const eRequestCommand: {
     eReqCmd_RFid_GetDataForScenario: number;
     eReqCmd_Torch_GetUVFoto: number;
     eReqCmd_InternetSend: number;
+    eReqCmd_GetGuid: number;
 };
 export declare const eRFID_AccessControl_ProcedureType: {
     ACPT_UNDEFINED: number;
@@ -1759,6 +1769,35 @@ export declare const eVisualFieldType: {
     FT_CITIZENSHIP_OF_FIRST_PERSON: number;
     FT_CITIZENSHIP_OF_SECOND_PERSON: number;
     FT_CVV: number;
+    FT_DATE_OF_INSURANCE_EXPIRY: number;
+    FT_MORTGAGE_BY: number;
+    FT_OLD_DOCUMENT_NUMBER: number;
+    FT_OLD_DATE_OF_ISSUE: number;
+    FT_OLD_PLACE_OF_ISSUE: number;
+    FT_DLCLASSCODE_LR_FROM: number;
+    FT_DLCLASSCODE_LR_TO: number;
+    FT_DLCLASSCODE_LR_NOTES: number;
+    FT_DLCLASSCODE_MR_FROM: number;
+    FT_DLCLASSCODE_MR_TO: number;
+    FT_DLCLASSCODE_MR_NOTES: number;
+    FT_DLCLASSCODE_HR_FROM: number;
+    FT_DLCLASSCODE_HR_TO: number;
+    FT_DLCLASSCODE_HR_NOTES: number;
+    FT_DLCLASSCODE_HC_FROM: number;
+    FT_DLCLASSCODE_HC_TO: number;
+    FT_DLCLASSCODE_HC_NOTES: number;
+    FT_DLCLASSCODE_MC_FROM: number;
+    FT_DLCLASSCODE_MC_TO: number;
+    FT_DLCLASSCODE_MC_NOTES: number;
+    FT_DLCLASSCODE_RE_FROM: number;
+    FT_DLCLASSCODE_RE_TO: number;
+    FT_DLCLASSCODE_RE_NOTES: number;
+    FT_DLCLASSCODE_R_FROM: number;
+    FT_DLCLASSCODE_R_TO: number;
+    FT_DLCLASSCODE_R_NOTES: number;
+    FT_DLCLASSCODE_CA_FROM: number;
+    FT_DLCLASSCODE_CA_TO: number;
+    FT_DLCLASSCODE_CA_NOTES: number;
     getTranslation(value: number): string;
 };
 export declare const FontStyle: {
@@ -2058,6 +2097,11 @@ export declare const Enum: {
         DATAMATRIX: number;
         ALL_1D: number;
         CODE11: number;
+    };
+    CameraMode: {
+        AUTO: number;
+        CAMERA1: number;
+        CAMERA2: number;
     };
     CameraTypes: {
         FRONT: string;
@@ -2402,6 +2446,10 @@ export declare const Enum: {
         PPORTRAIT_COMPARISON_NOT_ENOUGH_IMAGES: number;
         PORTRAIT_COMPARISON_NO_LIVE_PHOTO: number;
         PORTRAIT_COMPARISON_NO_SERVICE_LICENSE: number;
+        PORTRAIT_COMPARISON_NO_PORTRAIT_DETECTED: number;
+        MOBILE_IMAGES_UNSUITABLE_LIGHT_CONDITIONS: number;
+        MOBILE_IMAGES_WHITE_UV_NO_DIFFERENCE: number;
+        LAST_DIAGNOSE_VALUE: number;
     };
     eCheckResult: {
         CH_CHECK_ERROR: number;
@@ -2456,6 +2504,7 @@ export declare const Enum: {
         eReqCmd_RFid_GetDataForScenario: number;
         eReqCmd_Torch_GetUVFoto: number;
         eReqCmd_InternetSend: number;
+        eReqCmd_GetGuid: number;
     };
     eRFID_AccessControl_ProcedureType: {
         ACPT_UNDEFINED: number;
@@ -3384,6 +3433,35 @@ export declare const Enum: {
         FT_CITIZENSHIP_OF_FIRST_PERSON: number;
         FT_CITIZENSHIP_OF_SECOND_PERSON: number;
         FT_CVV: number;
+        FT_DATE_OF_INSURANCE_EXPIRY: number;
+        FT_MORTGAGE_BY: number;
+        FT_OLD_DOCUMENT_NUMBER: number;
+        FT_OLD_DATE_OF_ISSUE: number;
+        FT_OLD_PLACE_OF_ISSUE: number;
+        FT_DLCLASSCODE_LR_FROM: number;
+        FT_DLCLASSCODE_LR_TO: number;
+        FT_DLCLASSCODE_LR_NOTES: number;
+        FT_DLCLASSCODE_MR_FROM: number;
+        FT_DLCLASSCODE_MR_TO: number;
+        FT_DLCLASSCODE_MR_NOTES: number;
+        FT_DLCLASSCODE_HR_FROM: number;
+        FT_DLCLASSCODE_HR_TO: number;
+        FT_DLCLASSCODE_HR_NOTES: number;
+        FT_DLCLASSCODE_HC_FROM: number;
+        FT_DLCLASSCODE_HC_TO: number;
+        FT_DLCLASSCODE_HC_NOTES: number;
+        FT_DLCLASSCODE_MC_FROM: number;
+        FT_DLCLASSCODE_MC_TO: number;
+        FT_DLCLASSCODE_MC_NOTES: number;
+        FT_DLCLASSCODE_RE_FROM: number;
+        FT_DLCLASSCODE_RE_TO: number;
+        FT_DLCLASSCODE_RE_NOTES: number;
+        FT_DLCLASSCODE_R_FROM: number;
+        FT_DLCLASSCODE_R_TO: number;
+        FT_DLCLASSCODE_R_NOTES: number;
+        FT_DLCLASSCODE_CA_FROM: number;
+        FT_DLCLASSCODE_CA_TO: number;
+        FT_DLCLASSCODE_CA_NOTES: number;
         getTranslation(value: number): string;
     };
     FontStyle: {
