@@ -3709,62 +3709,411 @@ export declare const Enum: {
         BottomRight: number;
     };
 };
+/**
+ * @name DocumentReader
+ * @description
+ * This is a wrapper cordova plugin for Regula`s Document Reader.
+ *
+ * @usage
+ * ```typescript
+ * import { DocumentReader } from '@ionic-native/document-reader/ngx';
+ *
+ *
+ * constructor(public DocumentReader: DocumentReader) { }
+ *
+ * ...
+ *
+ *
+ * this.DocumentReader.prepareDatabase("Full").subscribe(message => {
+ *        if (message == "database prepared") {
+ *          this.DocumentReader.initializeReader(license).then(m => onInitialized()).catch(e => console.error(e));
+ *        }
+ *      })
+ *
+ * ```
+ */
 export declare class DocumentReaderOriginal extends IonicNativePlugin {
+    /**
+     *  Allows you to get the API version
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getAPIVersion(): Promise<any>;
+    /**
+     *  Allows you to get the available scenarios
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getAvailableScenarios(): Promise<any>;
+    /**
+     *  Allows you to check if NFC chip reading capability is available
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     isRFIDAvailableForUse(): Promise<any>;
+    /**
+     *  Allows you to get the Core mode
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getCoreMode(): Promise<any>;
+    /**
+     *  Allows you to get the Core version
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getCoreVersion(): Promise<any>;
+    /**
+     *  Allows you to get the database export date
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDatabaseDate(): Promise<any>;
+    /**
+     *  Allows you to get the database ID
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDatabaseID(): Promise<any>;
+    /**
+     *  Allows you to get the database version
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDatabaseVersion(): Promise<any>;
+    /**
+     *  Allows you to check if the SDK is ready for use
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDocumentReaderIsReady(): Promise<any>;
+    /**
+     *  Allows you to get the Document Reader status
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDocumentReaderStatus(): Promise<any>;
+    /**
+     *  Allows you to get the number of supported database countries
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDatabaseCountriesNumber(): Promise<any>;
+    /**
+     *  Allows you to get the number of supported database documents
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDatabaseDocumentsNumber(): Promise<any>;
+    /**
+     *  Allows you to get the selected scenario
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     selectedScenario(): Promise<any>;
+    /**
+     *  Allows you to get the path to the folder of the current session. Before using this, enable log saving. Each new session provides a different path
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getSessionLogFolder(): Promise<any>;
+    /**
+     *  Allows you to get the list of supported database documents use
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getDatabaseDescription(): Promise<any>;
+    /**
+     *  Use this method to open the camera preview which will pass frames for recognition and return results in the completion block when they are ready
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     showScanner(): Observable<any>;
+    /**
+     *  Use this method to indicate than the processing of the next page is started
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     startNewPage(): Promise<any>;
+    /**
+     *  Use this method to start a new session
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     startNewSession(): Promise<any>;
+    /**
+     *  Use the method below to open the RFID chip reading controller and start its processing
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     startRFIDReader(): Observable<any>;
+    /**
+     *  Use the method below to close the RFID chip reading controller and end its processing
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     stopRFIDReader(): Promise<any>;
+    /**
+     *  Use this method to close camera preview and stop processing
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     stopScanner(): Promise<any>;
+    /**
+     *  Use this method to deinitialize Document Reader
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     deinitializeReader(): Promise<any>;
+    /**
+     *  Allows you to check if a mobile authenticator is available for use
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     isAuthenticatorAvailableForUse(): Promise<any>;
+    /**
+     *  Use this method to get the config
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getConfig(): Promise<any>;
+    /**
+     *  Use this method to get the RFID scenario
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getRfidScenario(): Promise<any>;
+    /**
+     *  Allows you to get an expiration date of the license
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getLicenseExpiryDate(): Promise<any>;
+    /**
+     *  Allows you to get a list of country identifiers that are defined for processing in the license. If the array is empty, there are no restrictions for processing
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getLicenseCountryFilter(): Promise<any>;
+    /**
+     *  Allows you to check if NFC chip reading capability is available
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     licenseIsRfidAvailable(): Promise<any>;
+    /**
+     *  Use this method to get the camera session
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getCameraSessionIsPaused(): Promise<any>;
+    /**
+     *  Allows you to remove the added database
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     removeDatabase(): Promise<any>;
+    /**
+     *  Allows you to cancel database update
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     cancelDBUpdate(): Promise<any>;
+    /**
+     *  Use this method to reset configuration
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     resetConfiguration(): Promise<any>;
+    /**
+     *  Use this method to clear PKD certificates
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     clearPKDCertificates(): Promise<any>;
+    /**
+     *  Use this method to start RFID chip processing
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     readRFID(): Observable<any>;
+    /**
+     *  Use this method to get an RFID session status
+     *
+     * @return {Promise<any>} Returns a promise
+     */
     getRfidSessionStatus(): Promise<any>;
-    setEnableCoreLogs(arg0: any): Promise<any>;
-    addPKDCertificates(arg0: any): Promise<any>;
-    setCameraSessionIsPaused(arg0: any): Promise<any>;
-    getScenario(arg0: any): Promise<any>;
-    recognizeImages(arg0: any): Observable<any>;
-    showScannerWithCameraID(arg0: any): Observable<any>;
-    runAutoUpdate(arg0: any): Observable<any>;
-    setConfig(arg0: any): Promise<any>;
-    setRfidScenario(arg0: any): Promise<any>;
-    initializeReader(arg0: any): Promise<any>;
-    initializeReaderWithDatabasePath(arg0: any, arg1: any): Promise<any>;
-    prepareDatabase(arg0: any): Observable<any>;
-    recognizeImage(arg0: any): Observable<any>;
-    setRfidSessionStatus(arg0: any): Promise<any>;
-    recognizeImageFrame(arg0: any, arg1: any): Observable<any>;
-    recognizeImageWithOpts(arg0: any, arg1: any): Observable<any>;
-    recognizeVideoFrame(arg0: any, arg1: any): Observable<any>;
-    showScannerWithCameraIDAndOpts(arg0: any, arg1: any): Observable<any>;
-    recognizeImageWithImageInputParams(arg0: any, arg1: any): Observable<any>;
-    recognizeImageWithCameraMode(arg0: any, arg1: any): Observable<any>;
+    /**
+     *  Use this method to enable Core logs
+     *
+     * @param {boolean} logs
+     * @return {Promise<any>} Returns a promise
+     */
+    setEnableCoreLogs(logs: boolean): Promise<any>;
+    /**
+     *  Allows to add a list of PKD certificates during initialization process which will be passed to Core
+     *
+     * @param {any} certificates Array of jsonObjects with structure {binaryData: binaryData, resourceType: resourceType, privateKey: privateKey}
+     *  binaryData - base64 string
+     *  resourceType - number
+     *  privateKey(optional) - base64 string
+     * @return {Promise<any>} Returns a promise
+     */
+    addPKDCertificates(certificates: any): Promise<any>;
+    /**
+     *  If set, the camera session will be paused as soon as the result is received
+     *
+     * @param {boolean} paused
+     * @return {Promise<any>} Returns a promise
+     */
+    setCameraSessionIsPaused(paused: boolean): Promise<any>;
+    /**
+     *  Use this method to get a scenario
+     *
+     * @param {string} scenario Scenario`s unique identifier
+     * @return {Promise<any>} Returns a promise
+     */
+    getScenario(scenario: string): Promise<any>;
+    /**
+     *  Use this method to recognize images
+     *
+     * @param {any} images Array of strings that are base64 representations of images
+     * @return {Promise<any>} Returns a promise
+     */
+    recognizeImages(images: any): Observable<any>;
+    /**
+     *  Use this method to open the camera preview with the desired camera ID which will pass frames for recognition and return results in the completion block when they are ready
+     *
+     * @param {number} cameraID
+     * @return {Promise<any>} Returns a promise
+     */
+    showScannerWithCameraID(cameraID: number): Observable<any>;
+    /**
+     *  Use this method for getting always the latest version of the database
+     *
+     * @param {string} databaseType
+     * @return {Promise<any>} Returns a promise
+     */
+    runAutoUpdate(databaseType: string): Observable<any>;
+    /**
+     *  Use this method to set config
+     *
+     * @param {any} config JsonObject with structure
+     *    {functionality?: {name?: value1, name?: value2, ...},
+     *    customization?: {name?: value3, name?: value4, ...},
+     *    processParams?: {name?: value5, name?: value6, ...}}
+     *  name - string
+     *  value - any
+     * @return {Promise<any>} Returns a promise
+     */
+    setConfig(config: any): Promise<any>;
+    /**
+     *  Use this method to set an RFID scenario
+     *
+     * @param {any} scenario JsonObject with structure {name?: value1,name?: value2, ...}
+     *  name - string
+     *  value - any
+     * @return {Promise<any>} Returns a promise
+     */
+    setRfidScenario(scenario: any): Promise<any>;
+    /**
+     *  Use this method to initialize Document Reader
+     *
+     * @param {string} license License`s base64 representation
+     * @return {Promise<any>} Returns a promise
+     */
+    initializeReader(license: string): Promise<any>;
+    /**
+     *  Use this method to download a database from the Regula's server
+     *
+     * @param {string} databaseType
+     * @return {Promise<any>} Returns a promise
+     */
+    prepareDatabase(databaseType: string): Observable<any>;
+    /**
+     *  Use this method to recognize an image
+     *
+     * @param {string} image Image`s base64 representation
+     * @return {Promise<any>} Returns a promise
+     */
+    recognizeImage(image: string): Observable<any>;
+    /**
+     *  Use this method to set an RFID session status
+     *
+     * @param {string} status
+     * @return {Promise<any>} Returns a promise
+     */
+    setRfidSessionStatus(status: string): Promise<any>;
+    /**
+     *  Use this method to initialize Document Reader with the path to the database
+     *
+     * @param {string} license License`s base64 representation
+     * @param {string} path Path to the database
+     * @return {Promise<any>} Returns a promise
+     */
+    initializeReaderWithDatabasePath(license: string, path: string): Promise<any>;
+    /**
+     *  Use this method to recognize an image frame
+     *
+     * @param {string} image Image`s base64 representation
+     * @param {any} params JsonObject with structure {width: value1, height: value2, type: value3}
+     *  value1 - number
+     *  value2 - number
+     *  value3 - number
+     * @return {Promise<any>} Returns a promise
+     */
+    recognizeImageFrame(image: string, params: any): Observable<any>;
+    /**
+     *  Use this method to recognize an image with options
+     *
+     * @param {any} options JsonObject with structure
+     *    {functionality?: {name?: value, name?: value},
+     *    customization?: {name?: value, name?: value},
+     *    processParams?: {name?: value, name?: value}}
+     * @param {string} image Image`s base64 representation
+     * @return {Promise<any>} Returns a promise
+     */
+    recognizeImageWithOpts(options: any, image: string): Observable<any>;
+    /**
+     *  Use this method to recognize a stream of frames
+     *
+     * @param {string} byteString
+     * @param {any} params JsonObject with structure {width: value, height: value, type: value}
+     * @return {Promise<any>} Returns a promise
+     */
+    recognizeVideoFrame(byteString: string, params: any): Observable<any>;
+    /**
+     *  Use this method to open the camera preview with the desired camera ID and options which will pass frames for recognition and return results in the completion block when they are ready
+     *
+     * @param {number} cameraID
+     * @param {any} options JsonObject with structure
+     *    {functionality?: {name?: value1, name?: value2, ...},
+     *    customization?: {name?: value3, name?: value4, ...},
+     *    processParams?: {name?: value5, name?: value6, ...}}
+     *  name - string
+     *  value - any
+     * @return {Promise<any>} Returns a promise
+     */
+    showScannerWithCameraIDAndOpts(cameraID: number, options: any): Observable<any>;
+    /**
+     *  Use this method to recognize images with parameters
+     *
+     * @param {string} image Image`s base64 representation
+     * @param {any} params JsonObject with structure {width: value1, height: value2, type: value3}
+     *  value1 - number
+     *  value2 - number
+     *  value3 - number
+     * @return {Promise<any>} Returns a promise
+     */
+    recognizeImageWithImageInputParams(image: string, params: any): Observable<any>;
+    /**
+     *  Use this method to recognize a stream of frames
+     *
+     * @param {string} image Image`s base64 representation
+     * @param {boolean} mode
+     * @return {Promise<any>} Returns a promise
+     */
+    recognizeImageWithCameraMode(image: string, mode: boolean): Observable<any>;
 }
 
 export declare const DocumentReader: DocumentReaderOriginal;
